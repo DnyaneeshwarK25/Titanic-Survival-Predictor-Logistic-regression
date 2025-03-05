@@ -52,11 +52,11 @@ age = st.sidebar.slider("Age", 1, 100, 30)
 sibsp = st.sidebar.slider("Siblings/Spouses Aboard", 0, 8, 0)
 parch = st.sidebar.slider("Parents/Children Aboard", 0, 6, 0)
 fare = st.sidebar.slider("Fare Paid", 0.0, 500.0, 30.0)
-embarked = st.sidebar.selectbox("Embarked Port", ["C", "Q", "S"])
+embarked = st.sidebar.selectbox("Embarked Port", ["Cherbourg", "Queenstown", "Southampton"])
 
 # Convert categorical values
 sex = 1 if sex == "male" else 0
-embarked_dict = {"C": 0, "Q": 1, "S": 2}
+embarked_dict = {"Cherbourg": 0, "Queenstown": 1, "Southampton": 2}
 embarked = embarked_dict[embarked]
 
 features = {
