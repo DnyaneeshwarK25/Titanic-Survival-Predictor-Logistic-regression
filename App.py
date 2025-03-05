@@ -3,15 +3,21 @@ import pandas as pd
 import pickle
 import os
 import numpy as np
+import sklearn  # Ensure scikit-learn is available
 
 def load_model():
-    file_path = "logistic_regression_titanic.pkl"  # Ensure the file is in the same directory as app.py
+    file_path = "logistic_regression_titanic.pkl"  # Ensure correct model file name
     if not os.path.exists(file_path):
         st.error(f"Model file '{file_path}' not found. Please upload the model file.")
         return None
-    with open(file_path, "rb") as file:
-        model = pickle.load(file)
-    return model
+    try:
+        with open(file_path, "rb") as file:
+            model = pickle.load(file)
+        return model
+    except ModuleNotFoundError as e:
+        st.error("ModuleNotFoundError: The model may have been saved with missing dependencies.")
+        st.error(str(e))
+        return None
 
 model = load_model()
 
@@ -55,7 +61,7 @@ if st.sidebar.button("Predict Survival"):
     prediction, probability = predict_survival(features)
     
     if prediction is None:
-        st.error("Prediction cannot be made because the model file is missing.")
+        st.error("Prediction cannot be made because the model file is missing or incompatible.")
     else:
         st.subheader("Prediction Result")
         st.write(f"Survival Prediction: {'Survived' if prediction == 1 else 'Did Not Survive'}")
