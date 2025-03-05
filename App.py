@@ -3,7 +3,7 @@ import pandas as pd
 import pickle
 import os
 import numpy as np
-import sklearn  # Ensure scikit-learn is available
+from sklearn.preprocessing import StandardScaler  # Ensure scikit-learn is available
 
 def load_model():
     file_path = "logistic_regression_titanic.pkl"  # Ensure correct model file name
@@ -25,6 +25,14 @@ model = load_model()
 def predict_survival(features):
     if model is None:
         return None, None
+    
+    # Ensure all required features are present
+    expected_features = ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
+    for feature in expected_features:
+        if feature not in features:
+            st.error(f"Missing feature: {feature}. Please provide all required inputs.")
+            return None, None
+    
     features_df = pd.DataFrame([features])
     prediction = model.predict(features_df)
     probability = model.predict_proba(features_df)[:, 1]
@@ -44,9 +52,12 @@ age = st.sidebar.slider("Age", 1, 100, 30)
 sibsp = st.sidebar.slider("Siblings/Spouses Aboard", 0, 8, 0)
 parch = st.sidebar.slider("Parents/Children Aboard", 0, 6, 0)
 fare = st.sidebar.slider("Fare Paid", 0.0, 500.0, 30.0)
+embarked = st.sidebar.selectbox("Embarked Port", ["C", "Q", "S"])
 
 # Convert categorical values
 sex = 1 if sex == "male" else 0
+embarked_dict = {"C": 0, "Q": 1, "S": 2}
+embarked = embarked_dict[embarked]
 
 features = {
     "Pclass": pclass,
@@ -55,6 +66,7 @@ features = {
     "SibSp": sibsp,
     "Parch": parch,
     "Fare": fare,
+    "Embarked": embarked,
 }
 
 if st.sidebar.button("Predict Survival"):
